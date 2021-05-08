@@ -18,6 +18,7 @@
 
     Run on command line:
  
+    - cp .env.example .env
     - docker-compose up -d
 
 # Access SonarQube
