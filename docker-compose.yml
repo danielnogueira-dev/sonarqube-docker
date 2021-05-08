@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  sonarqube:
+    image: ${SONAQUBE_IMAGE_VERSION}
+    container_name: ${SONAQUBE_CONTAINER_NAME}
+    restart: ${ALWAYS}
+    expose:
+      - ${SONAQUBE_EXPOSE_PORT}
+    ports:
+      - ${SONAQUBE_LOCALHOST_PORT}:${SONAQUBE_CONTAINER_PORT}
+    networks:
+      sonarnet:
+        ipv4_address: ${SONARQUBE_IP}
+    environment:
+      - sonar.jdbc.url=${POSTGRES_URL}
+      - sonar.jdbc.username=${POSTGRES_USER}
+      - sonar.jdbc.password=${POSTGRES_PASSWORD}
+      - stop-timeout=${SONARQUBE_STOP_TIMEOUT}
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+  db:
+    image: ${POSTGRES_IMAGE_VERSION}
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: ${ALWAYS}
+    networks:
+      sonarnet:
+        ipv4_address: ${POSTGRES_IP}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+networks:
+  sonarnet:
+    driver: ${NETWORK_BRIDGE}
+    ipam:
+      driver: ${NETWORK_DEFAULT}
+      config:
+        - subnet: ${NETWORK_CONFIG_SUBNET}
+
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
