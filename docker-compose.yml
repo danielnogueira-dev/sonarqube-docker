@@ -18,10 +18,10 @@ services:
       - sonar.jdbc.password=${POSTGRES_PASSWORD}
       - stop-timeout=${SONARQUBE_STOP_TIMEOUT}
     volumes:
-      - sonarqube_conf:/opt/sonarqube/conf
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
+      - ${SONARQUBE_VOLUME_CONF_LOCALHOST}:${SONARQUBE_VOLUME_CONF_CONTAINER}
+      - ${SONARQUBE_VOLUME_DATA_LOCALHOST}:${SONARQUBE_VOLUME_DATA_CONTAINER}
+      - ${SONARQUBE_VOLUME_EXTENSIONS_LOCALHOST}:${SONARQUBE_VOLUME_EXTENSIONS_CONTAINER}
+      - ${SONARQUBE_VOLUME_LOGS_LOCALHOST}:${SONARQUBE_VOLUME_LOGS_CONTAINER}
   db:
     image: ${POSTGRES_IMAGE_VERSION}
     container_name: ${POSTGRES_CONTAINER_NAME}
@@ -33,8 +33,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
+      - "${POSTGRES_VOLUME_DATA_LOCALHOST}:${POSTGRES_VOLUME_DATA_CONTAINER}"
 
 networks:
   sonarnet:
@@ -43,11 +42,3 @@ networks:
       driver: ${NETWORK_DEFAULT}
       config:
         - subnet: ${NETWORK_CONFIG_SUBNET}
-
-volumes:
-  sonarqube_conf:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_logs:
-  postgresql:
-  postgresql_data:
